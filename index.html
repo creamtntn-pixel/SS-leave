@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบฟอร์มใบลา | ระบบใบลานักเรียนออนไลน์</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Prompt', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: {
+                            DEFAULT: "hsl(var(--primary))",
+                            foreground: "hsl(var(--primary-foreground))",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(var(--secondary))",
+                            foreground: "hsl(var(--secondary-foreground))",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(var(--muted))",
+                            foreground: "hsl(var(--muted-foreground))",
+                        },
+                        card: {
+                            DEFAULT: "hsl(var(--card))",
+                            foreground: "hsl(var(--card-foreground))",
+                        },
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        form {
+      background: #e77c9c;
+      padding: 20px;
+      max-width: 500px;
+      min-height: 100vh;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(190, 175, 175, 0.1);
+      box-sizing: border-box;
+      overflow-y: auto;
+        }
+
+       body {
+    font-family: 'Prompt', 'Inter', sans-serif;
+    background-image: url("strawberry-bg.jpg");
+    background-repeat: repeat;
+    background-size: auto;   /* ปรับความถี่ลาย */
+    height: auto;
+}
+
+
+        .gradient-primary {
+            background: linear-gradient(135deg, hsl(325, 100%, 78%) 0%, hsl(258, 96%, 78%) 100%);
+        }
+
+        .shadow-soft {
+            box-shadow: 0 4px 20px -4px hsl(221 83% 53% / 0.15);
+        }
+
+        /* Animation Classes */
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+        .animate-slide-up { animation: slideUp 0.6s ease-out forwards; opacity: 0; }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-pulse-custom { animation: pulse 2s infinite ease-in-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* Pattern Background */
+        .pattern-bg {
+            background-image: 
+                radial-gradient(circle at 25% 25%, hsl(221 83% 53% / 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, hsl(258 89% 66% / 0.03) 0%, transparent 50%);
+        }
+    </style>
+</head>
+<body class="py-8 px-4">
+    <body class="min-h-screen bg-cover bg-center relative">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 flex flex-col items-center text-center pt-8 z-10">
+
+  <!-- ตรา -->
+  <img src="ตราโรงเรียน.png"
+       alt="ตราโรงเรียน"
+       class="w-[160px] h-auto mb-4">
+
+
+    <div class="w-full max-w-md mx-auto form-card">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-secondary/5 rounded-full blur-3xl animate-float" style="animation-delay: 3s;"></div>
+    </div>
+
+    <div class="relative z-10 container max-w-lg mx-auto">
+        <header class="text-center mb-8 animate-fade-in">
+           
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                ใบลานักเรียน
+            </h1>
+            <p class="text-muted-foreground">
+                กรอกฟอร์มและดาวน์โหลดใบลาเป็น PDF ได้ทันที
+            </p>
+        </header>
+
+        <div class="w-full bg-white rounded-xl border border-border shadow-soft overflow-hidden animate-slide-up">
+            <div class="gradient-primary text-primary-foreground pb-8 pt-8 px-6">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i data-lucide="file-text" class="w-8 h-8 text-white"></i>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-semibold text-center text-white">แบบฟอร์มใบลา</h2>
+                <p class="text-white/80 text-center text-sm mt-2">กรอกข้อมูลเพื่อสร้างใบลาของนักเรียน</p>
+            </div>
+
+            <div class="p-6 space-y-5">
+                <div class="space-y-2 animate-fade-in" style="animation-delay: 0.1s;">
+                    <label for="studentName" class="flex items-center gap-2 text-foreground font-medium text-sm">
+                        <i data-lucide="user" class="w-4 h-4 text-primary"></i>
+                        ชื่อ-นามสกุลนักเรียน
+                    </label>
+                    <input type="text" id="studentName" placeholder="กรอกชื่อ-นามสกุล" 
+                        class="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all duration-300">
+                </div>
+
+                <div class="space-y-2 animate-fade-in" style="animation-delay: 0.2s;">
+                    <label for="studentClass" class="flex items-center gap-2 text-foreground font-medium text-sm">
+                        <i data-lucide="graduation-cap" class="w-4 h-4 text-primary"></i>
+                        ชั้นเรียน
+                    </label>
+                    <input type="text" id="studentClass" placeholder="เช่น ม.3/1" 
+                        class="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all duration-300">
+                </div>
+
+                <div class="space-y-2 animate-fade-in" style="animation-delay: 0.3s;">
+                    <label for="teacherName" class="flex items-center gap-2 text-foreground font-medium text-sm">
+                        <i data-lucide="user-check" class="w-4 h-4 text-primary"></i>
+                        ชื่อครูประจำชั้นเรียน
+                    </label>
+                    <input type="text" id="teacherName" placeholder="กรอกชื่อครูประจำชั้น" 
+                        class="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all duration-300">
+                </div>
+
+                <div class="space-y-2 animate-fade-in" style="animation-delay: 0.4s;">
+                    <label for="leaveType" class="flex items-center gap-2 text-foreground font-medium text-sm">
+                        <i data-lucide="alert-circle" class="w-4 h-4 text-primary"></i>
+                        ประเภทการลา
+                    </label>
+                    <div class="relative">
+                        <select id="leaveType" class="flex h-12 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 appearance-none">
+                            <option value="" disabled selected>-- กรุณาเลือกประเภทการลา --</option>
+                            <option value="ลาป่วย">🏥 ลาป่วย</option>
+                            <option value="ลากิจ">📋 ลากิจ</option>
+                            <option value="อื่นๆ">📝 อื่นๆ</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="absolute right-3 top-3.5 h-4 w-4 opacity-50 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 animate-fade-in" style="animation-delay: 0.5s;">
+                    <div class="space-y-2">
+                        <label for="fromDate" class="flex items-center gap-2 text-foreground font-medium text-sm">
+                            <i data-lucide="calendar" class="w-4 h-4 text-primary"></i>
+                            วันเริ่มลา
+                        </label>
+                        <input type="date" id="fromDate" 
+                            class="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="toDate" class="flex items-center gap-2 text-foreground font-medium text-sm">
+                            <i data-lucide="calendar" class="w-4 h-4 text-secondary"></i>
+                            วันสิ้นสุด
+                        </label>
+                        <input type="date" id="toDate" 
+                            class="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    </div>
+                </div>
+
+                <div class="space-y-2 animate-fade-in" style="animation-delay: 0.6s;">
+                    <label for="reason" class="flex items-center gap-2 text-foreground font-medium text-sm">
+                        <i data-lucide="file-text" class="w-4 h-4 text-primary"></i>
+                        สาเหตุการลา
+                    </label>
+                    <textarea id="reason" placeholder="เช่น ป่วยเป็นไข้ มีอาการตัวร้อนและเจ็บคอ..." 
+                        class="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"></textarea>
+                </div>
+
+                <div class="space-y-2 animate-fade-in" style="animation-delay: 0.7s;">
+                    <label for="files" class="flex items-center gap-2 text-foreground font-medium text-sm">
+                        <i data-lucide="paperclip" class="w-4 h-4 text-primary"></i>
+                        แนบไฟล์หลักฐาน
+                    </label>
+                    <input id="files" type="file" accept="image/*,.pdf" multiple
+                        class="flex w-full h-12 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground file:border-0 file:bg-primary/10 file:text-primary file:text-sm file:font-medium file:mr-4 file:px-4 file:py-1 file:rounded-md hover:file:bg-primary/20 transition-all cursor-pointer">
+                    <p class="text-xs text-muted-foreground">รองรับไฟล์ภาพ และ PDF (ใบรับรองแพทย์ หรือหลักฐานอื่นๆ)</p>
+                </div>
+
+                <button onclick="generatePDF()" id="submitBtn" class="w-full h-14 inline-flex items-center justify-center whitespace-nowrap rounded-md text-lg font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 gradient-primary text-primary-foreground hover:opacity-90 shadow-soft hover:shadow-glow mt-6 animate-fade-in gap-2" style="animation-delay: 0.8s;">
+                    <i data-lucide="download" class="w-5 h-5"></i>
+                    สร้างใบลา (PDF)
+                </button>
+
+                <div class="flex items-center justify-center gap-2 text-muted-foreground text-sm pt-2 animate-fade-in" style="animation-delay: 0.9s;">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-green-500"></i>
+                    <span>ปลอดภัย • ข้อมูลไม่ถูกจัดเก็บ</span>
+
+                    <button id="shareButton" style="
+                background:#06C755;
+                color:white;
+                padding:10px 20px;
+                border:none;
+                border-radius:8px;
+                cursor:pointer;
+                margin-top:10px;
+                display:none;">
+                📤 แชร์ไปหาครู
+                </button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center mt-8 text-muted-foreground text-sm animate-fade-in" style="animation-delay: 1s;">
+            <p>สร้างด้วย ❤️ สำหรับนักเรียน</p>
+        </footer>
+    </div>
+
+    <script>
+
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Format Date Function
+        function formatThaiDate(dateStr) {
+            if (!dateStr) return "";
+            const date = new Date(dateStr);
+            const thaiMonths = [
+                "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+                "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+            ];
+            const day = date.getDate();
+            const month = thaiMonths[date.getMonth()];
+            const year = date.getFullYear() + 543;
+            return `${day} ${month} ${year}`;
+        }
+
+        // Generate PDF Function
+        async function generatePDF() {
+            const studentName = document.getElementById('studentName').value;
+            const studentClass = document.getElementById('studentClass').value;
+            const teacherName = document.getElementById('teacherName').value;
+            const leaveType = document.getElementById('leaveType').value;
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const reason = document.getElementById('reason').value;
+
+            // Simple Validation
+            if (!studentName || !studentClass || !teacherName || !leaveType || !fromDate || !toDate || !reason) {
+                alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+                return;
+            }
+
+
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="animate-spin mr-2">⟳</span> กำลังสร้าง...';
+            btn.disabled = true;
+
+            try {
+                // Initialize jsPDF
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // หมายเหตุสำคัญเรื่องภาษาไทย: 
+                // jsPDF แบบ CDN ปกติจะไม่รองรับภาษาไทยโดยตรง คุณจะได้ตัวอักษรขยุกขยิก
+                // หากต้องการภาษาไทย ต้องเพิ่มไฟล์ Font .ttf ที่แปลงเป็น base64 แล้วลงไป
+                // ในตัวอย่างนี้ ผมจะใช้ภาษาอังกฤษและตัวอักษรมาตรฐานเพื่อให้โค้ดทำงานได้ก่อน
+                // หากต้องการภาษาไทยจริงๆ ต้องใช้ library เสริมเช่น pdfmake หรือเพิ่ม custom font ให้ jsPDF
+                doc.addFileToVFS("THSarabunNew.ttf", thSarabunNewFont);
+                doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
+                doc.setFont("THSarabunNew");
+
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(20);
+                doc.text("Leave Request Form", 105, 30, { align: "center" });
+
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(12);
+
+                let yPos = 50;
+                const lineHeight = 10;
+
+                // เนื่องจากข้อจำกัดของ jsPDF กับภาษาไทยในโหมด Client-side HTML ธรรมดา
+                // เราจะแสดงผลเป็น Transliteration หรือค่าที่กรอกมา (ซึ่งถ้าเป็นไทยอาจจะไม่แสดงผลถูกต้อง 100% ใน Standard Font)
+                
+                doc.text(`Student Name: ${studentName}`, 20, yPos); yPos += lineHeight;
+                doc.text(`Class: ${studentClass}`, 20, yPos); yPos += lineHeight;
+                doc.text(`Teacher: ${teacherName}`, 20, yPos); yPos += lineHeight;
+                doc.text(`Leave Type: ${leaveType}`, 20, yPos); yPos += lineHeight;
+                doc.text(`From: ${fromDate} To: ${toDate}`, 20, yPos); yPos += lineHeight;
+                
+                // ตัดคำยาวๆ ในส่วนเหตุผล
+                const splitReason = doc.splitTextToSize(`Reason: ${reason}`, 170);
+                doc.text(splitReason, 20, yPos);
+
+                const pdfBlob = doc.output("blob");
+                doc.save(`levae-request-${studentName}.pdf`);
+                showShareButton(pdfBlob);
+
+
+            } catch (error) {
+                console.error(error);
+                alert("เกิดข้อผิดพลาดในการสร้าง PDF");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+             </script>
+                <!-- ปุ่มแชร์ -->
+                
+                
+<script>
+const shareButton = document.getElementById("shareButton");
+
+function showShareButton(pdfBlob) {
+  shareButton.style.display = "block";
+  shareButton.onclick = () => sharePDF(pdfBlob);
+}
+
+async function sharePDF(pdfBlob) {
+  const file = new File([pdfBlob], "ใบลานักเรียน.pdf", {
+    type: "application/pdf"
+  });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    await navigator.share({
+      title: "ใบลานักเรียน",
+      text: "ส่งใบลานักเรียนให้ครูค่ะ/ครับ",
+      files: [file]
+    });
+  } else {
+    alert("อุปกรณ์นี้ยังไม่รองรับการแชร์ไฟล์");
+  }
+}
+</script>
+</body>
+</html>
