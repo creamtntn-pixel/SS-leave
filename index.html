@@ -71,7 +71,7 @@
        body {
     font-family: 'Prompt', 'Inter', sans-serif;
     background-image: url("gg-bg.jpg");
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     background-size: auto;   /* ปรับความถี่ลาย */
     min-height: 100vh;
 }
@@ -104,17 +104,16 @@
         }
     </style>
 </head>
-<body class="py-8 px-4">
-    <body class="overflow-x-hidden">
+<body class="py-8 px-4 overflow-x-hidden">
     <img id="schoolLogoImg"
        src="FB_IMG_ตราวิลัย.png.jpg"
        style="display:none;" />
 
-    <div class="w-full max-w-md mx-auto px-4">
-        <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float"></div>
-        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-secondary/5 rounded-full blur-3xl animate-float" style="animation-delay: 3s;"></div>
-    </div>
-
+    <div class="fixed inset-0 overflow-hidden -z-10">
+    <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>
+  </div>
+  
     <div class="relative z-10 container max-w-lg mx-auto">
         <header class="text-center mb-8 animate-fade-in">
             <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
