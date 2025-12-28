@@ -56,17 +56,26 @@
     </script>
 
     <style>
-        form {
-      background: #e77c9c;
-      padding: 20px;
-      max-width: 500px;
-      min-height: 100vh;
-      margin: auto;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(190, 175, 175, 0.1);
-      box-sizing: border-box;
-      overflow-y: auto;
+        :root {
+            
+            --background: 220 25% 97%;
+            --foreground: 222 47% 11%;
+            --card: 0 0% 100%;
+            --card-foreground: 222 47% 11%;
+            --primary: 221 83% 53%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 258 89% 66%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 210 40% 96%;
+            --muted-foreground: 215 16% 47%;
+            --border: 214 32% 91%;
+            --input: 214 32% 91%;
+            --ring: 221 83% 53%;
+            --radius: 0.75rem;    
+       
+       
         }
+        
 
        body {
     font-family: 'Prompt', 'Inter', sans-serif;
@@ -74,6 +83,8 @@
     background-repeat: repeat;
     background-size: auto;   /* ปรับความถี่ลาย */
     min-height: 100vh;
+    max-width: 100%;
+    overflow-x: hidden ;
 }
 
 
@@ -105,20 +116,25 @@
     </style>
 </head>
 <body class="py-8 px-4 overflow-x-hidden">
+   
     <img id="schoolLogoImg"
-       src="FB_IMG_ตราวิลัย.png.jpg"
-       style="display:none;" />
+     src="logo.png"
+     style="display:none">
 
-    <div class="fixed inset-0 overflow-hidden -z-10">
-    <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl"></div>
-    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>
+     <img src="ตราโรงเรียน.png"
+       alt="ตราโรงเรียน"
+       class="w-[160px] h-auto mb-4 mx-auto block">
+
+    <div class="absolute inset-0 overflow-hidden -z-10 pointer-events-none">
+    <div class="absolute -top-40 -right-40 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 -left-40 w-64 h-64 bg-secondary/5 rounded-full blur-3xl"></div>
   </div>
-  
+
+
+
     <div class="relative z-10 container max-w-lg mx-auto">
         <header class="text-center mb-8 animate-fade-in">
             <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
-                <span class="w-2 h-2 bg-primary rounded-full animate-pulse-custom"></span>
-                ระบบออนไลน์
             </div>
             <h1 class="text-3xl md:text-4xl font-bold text-foreground mb-2">
                 ใบลานักเรียน
@@ -128,7 +144,7 @@
             </p>
         </header>
 
-        <div class="w-full bg-white rounded-xl border border-border shadow-soft overflow-hidden animate-slide-up">
+        <div class="w-full bg-pink rounded-xl border border-border shadow-soft overflow-hidden animate-slide-up">
             <div class="gradient-primary text-primary-foreground pb-8 pt-8 px-6">
                 <div class="flex items-center justify-center mb-4">
                     <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
@@ -297,10 +313,25 @@ const centerX = pageWidth / 2;
       return;
     }
     let y = 20;
+    let leaveText = "ขออนุญาตลาเรียน";
+    let leaveBody = "ลาเรียน";
+
+    if (leaveType === "ลากิจ") {
+    leaveText = "ขออนุญาตลากิจ";
+    leaveBody = "ลากิจ";
+    } else if (leaveType === "ลาป่วย") {
+    leaveText = "ขออนุญาตลาป่วย";
+    leaveBody = "ลาป่วย";
+    } else if (leaveType === "อื่นๆ") {
+    leaveText = "ขออนุญาตลาอื่นๆ";
+    leaveBody = "ลาอื่นๆ";
+    }
 
 const img = document.getElementById("schoolLogoImg");
-doc.addImage(img, "PNG", centerX - 15, y, 30, 30);
-y += 40;
+
+if (img && img.complete && img.naturalWidth !== 0) {
+  doc.addImage(img, "png", 90, 10, 30, 30);
+}
 
     doc.setFontSize(20);
     doc.text("ใบลานักเรียน", 105, y, { align: "center" });
@@ -313,13 +344,13 @@ y += 40;
 
 
     // ===== เรื่อง / เรียน =====
-    doc.text("เรื่อง    ขออนุญาตลาเรียน", 20, y); y += 8;
+    doc.text(`เรื่อง    ${leaveText}`, 20, y); y += 8;
     doc.text(`เรียน    ครูประจำชั้น ${teacher}`, 20, y); y += 12;
 
     // ===== เนื้อหา =====
     doc.text(
       `ข้าพเจ้า ${name} นักเรียนชั้น ${cls} ` +
-      `ขออนุญาตลาเรียน เนื่องจาก ${reason} ` +
+      `ขออนุญาต${leaveBody} เนื่องจาก ${reason} ` +
       `ตั้งแต่วันที่ ${from} ถึงวันที่ ${to}`,
       20, y, { maxWidth: 170 }
     );
