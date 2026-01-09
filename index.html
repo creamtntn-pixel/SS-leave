@@ -346,6 +346,39 @@ floating-strawberries {
     }
 }
 
+button {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 70%, transparent 100%);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: ripple-wave 0.8s ease-out;
+    pointer-events: none;
+}
+
+@keyframes ripple-wave {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+        border-width: 2px;
+    }
+    50% {
+        opacity: 0.8;
+        border-width: 1px;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+        border-width: 0px;
+    }
+}
+
+
     </style>
 </head>
 <body class="py-8 px-4 overflow-x-hidden">
@@ -516,6 +549,7 @@ floating-strawberries {
         lucide.createIcons();
     </script>
 
+
               <div class="w-full text-center pt-2 animate-fade-in" style="animation-delay: 0.9s;">
     <div class="flex items-center justify-center gap-2 text-black text-sm mb-3">
         <i data-lucide="check-circle-2" class="w-4 h-4 text-green-500"></i>
@@ -564,7 +598,7 @@ async function generatePDF() {
     const from = document.getElementById("fromDate").value;
     const to = document.getElementById("toDate").value;
     const reason = document.getElementById("reason").value;
-
+    
     if (!name || !cls || !type) {
       alert("กรุณากรอกข้อมูลให้ครบ");
       return;
@@ -572,31 +606,29 @@ async function generatePDF() {
     let y = 20;
 
     const pageWidth = doc.internal.pageSize.getWidth();
-const logoSize = 30;
-const logoX = (pageWidth - logoSize) / 2;
+    const logoSize = 30;
+    const logoX = (pageWidth - logoSize) / 2;
 
-const img = document.getElementById("schoolLogoImg");
-if (img && img.complete && img.naturalWidth !== 0) {
-  doc.addImage(img, "PNG", logoX, y, logoSize, logoSize);
-  y += logoSize + 10;
-}
+    const img = document.getElementById("schoolLogoImg");
+    if (img && img.complete && img.naturalWidth !== 0) {
+      doc.addImage(img, "PNG", logoX, y, logoSize, logoSize);
+      y += logoSize + 10;
+    }
 
     const leaveType = document.getElementById("leaveType").value;
 
-  let leaveText = "ขออนุญาตลาเรียน";
-  if (leaveType === "ลากิจ") leaveText = "ขออนุญาตลากิจ";
-  else if (leaveType === "ลาป่วย") leaveText = "ขออนุญาตลาป่วย";
-  else if (leaveType === "อื่นๆ") leaveText = "ขออนุญาตลาอื่นๆ";
+    let leaveText = "ขออนุญาตลาเรียน";
+    if (leaveType === "ลากิจ") leaveText = "ขออนุญาตลากิจ";
+    else if (leaveType === "ลาป่วย") leaveText = "ขออนุญาตลาป่วย";
+    else if (leaveType === "อื่นๆ") leaveText = "ขออนุญาตลาอื่นๆ";
 
-    doc.setFontSize(20);
-    doc.text("ใบลานักเรียน", 105, y, { align: "center" });
-    y += 15;
+    doc.setFontSize(17);
+   
 
-    const todayThai = thaiDate(new Date().toISOString().slice(0,10));
+     const todayThai = thaiDate(new Date().toISOString().slice(0,10));
 
-    doc.text(`วันที่ ${todayThai}`, 120, y);
+     doc.text(`วันที่ ${todayThai}`, 105, y, { align: "center" });
     y += 12;
-
 
     // ===== เรื่อง / เรียน =====
     doc.text(`เรื่อง    ${leaveText}`, 20, y); y += 8;
@@ -604,115 +636,157 @@ if (img && img.complete && img.naturalWidth !== 0) {
 
     // ===== เนื้อหา =====
     doc.text(
-      `ข้าพเจ้า ${name} นักเรียนชั้น ${cls} ` +
+      `\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\    ข้าพเจ้า ${name} นักเรียนชั้น ${cls} ` +
       `${leaveText} เนื่องจาก ${reason} ` +
-      `ตั้งแต่วันที่ ${from} ถึงวันที่ ${to}`,
+      `${dateToThai(from)} ถึง ${dateToThai(to)}`,
       20, y, { maxWidth: 170 }
     );
     y += 30;
 
-    doc.text("จึงเรียนมาเพื่อขออนุญาต", 20, y);
+    doc.text("จึงเรียนมาเพื่อขออนุญาต", 105, y, { align: "center", maxWidth: 170 });
     y += 20;
 
     // ===== ลงชื่อ =====
     doc.text("ขอแสดงความนับถือ", 130, y); y += 15;
-    doc.text(`(ลงชื่อ) ${name}`, 120, y);y += 8;
+    doc.text(`(${name})`, 125, y); y += 10;
     doc.text("นักเรียน", 140, y);
     y += 20;
 
-const files = document.getElementById("files").files;
-if (files.length > 0) {
-  doc.addPage();
-  let y = 20;
-  doc.setFontSize(16);
-  doc.text("เอกสารแนบ", 20, y);
-  y += 10;
-  
-  // ใช้ Promise เพื่อรอให้รูปโหลดเสร็จ
-  for (const file of files) {
-    if (!file.type.startsWith("image/")) continue;
-    const imgData = await fileToBase64(file);
-    
-    // รอให้รูปโหลด
-    await new Promise((resolve) => {
-      const img = new Image();
-      img.src = imgData;
+    const files = document.getElementById("files").files;
+    if (files.length > 0) {
+      doc.addPage();
+      let y = 20;
+      doc.setFontSize(16);
+      doc.text("เอกสารแนบ", 20, y);
+      y += 10;
       
-      img.onload = function() {
-        const maxWidth = 170;
-        const maxHeight = 230;
+      for (const file of files) {
+        if (!file.type.startsWith("image/")) continue;
+        const imgData = await fileToBase64(file);
         
-        let width = img.width;
-        let height = img.height;
-        const ratio = width / height;
-        
-        if (width > maxWidth) {
-          width = maxWidth;
-          height = maxWidth / ratio;
-        }
-        if (height > maxHeight) {
-          height = maxHeight;
-          width = maxHeight * ratio;
-        }
-        
-        doc.addImage(imgData, "JPEG", 20, y, width, height);
-        y += height + 10;
-        if (y > 250) {
-          y = 20;
-          doc.addPage();
-        }
-        
-        resolve(); // เรียกเมื่อเสร็จ
-      };
-      
-      img.onerror = () => resolve(); // ถ้าโหลดไม่สำเร็จ
-    });
-  }
-}
+        await new Promise((resolve) => {
+          const img = new Image();
+          img.src = imgData;
+          
+          img.onload = function() {
+            const maxWidth = 170;
+            const maxHeight = 230;
+            
+            let width = img.width;
+            let height = img.height;
+            const ratio = width / height;
+            
+            if (width > maxWidth) {
+              width = maxWidth;
+              height = maxWidth / ratio;
+            }
+            if (height > maxHeight) {
+              height = maxHeight;
+              width = maxHeight * ratio;
+            }
+            
+            doc.addImage(imgData, "JPEG", 20, y, width, height);
+            y += height + 10;
+            if (y > 250) {
+              y = 20;
+              doc.addPage();
+            }
+            
+            resolve();
+          };
+          
+          img.onerror = () => resolve();
+        });
+      }
+    }
 
     const pdfBlob = doc.output("blob");
 
-// ✅ เก็บไฟล์ไว้สำหรับแชร์
-lastPDFFile = new File([pdfBlob], "ใบลานักเรียน.pdf", {
-  type: "application/pdf"
-});
+    // เก็บไฟล์ไว้สำหรับแชร์
+    lastPDFFile = new File([pdfBlob], "ใบลานักเรียน.pdf", {
+      type: "application/pdf"
+    });
 
-const url = URL.createObjectURL(pdfBlob);
-window.open(url, "_blank");
+    const url = URL.createObjectURL(pdfBlob);
+    window.open(url, "_blank");
 
-   } catch (err) {
+  } catch (err) {
     console.error(err);
     alert("เกิดข้อผิดพลาด (ดู Console)");
   }
 }
 
-function readFileAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+async function sharePDF() {
+  try {
+    const name = document.getElementById("studentName").value;
+    const cls = document.getElementById("studentClass").value;
+    const type = document.getElementById("leaveType").value;
+    const from = document.getElementById("fromDate").value;
+    const to = document.getElementById("toDate").value;
+    const reason = document.getElementById("reason").value;
+
+    if (!name || !cls || !type) {
+      alert("กรุณากรอกข้อมูลให้ครบ");
+      return;
+    }
+
+    if (!lastPDFFile) {
+      // ถ้ายังไม่มี PDF ให้สร้างอันใหม่แล้วแชร์
+      await generatePDF();
+    }
+
+    if (lastPDFFile && navigator.canShare && navigator.canShare({ files: [lastPDFFile] })) {
+      await navigator.share({
+        title: "ใบลานักเรียน",
+        files: [lastPDFFile]
+      });
+    } else if (lastPDFFile) {
+      alert("อุปกรณ์นี้ไม่รองรับการแชร์");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("เกิดข้อผิดพลาด");
+  }
 }
 
- async function sharePDF() {
-  if (!lastPDFFile) {
-    alert("กรุณาสร้าง PDF ก่อน");
-    return;
-  }
-
-  if (navigator.canShare && navigator.canShare({ files: [lastPDFFile] })) {
-    await navigator.share({
-      title: "ใบลานักเรียน",
-      files: [lastPDFFile]
-    });
-  } else {
-    alert("อุปกรณ์นี้ไม่รองรับการแชร์");
-  }
-}
-
+  function dateToThai(dateStr) {
+  const date = new Date(dateStr + 'T00:00:00');
+  const days = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+  const months = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
   
+  const day = days[date.getDay()];
+  const dateNum = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear() + 543;
+  
+  return `วันที่ ${dateNum} ${month} ${year}`;
+}
+// Ripple Effect - เฉพาะปุ่มสร้างและแชร์
+document.querySelectorAll('button[onclick]').forEach(button => {
+    button.addEventListener('click', function(e) {
+        // ตรวจสอบว่าเป็นปุ่มที่ต้องการ
+        if (!this.textContent.includes('สร้างใบลา') && !this.textContent.includes('แชร์ไปหาครู')) {
+            return;
+        }
 
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => ripple.remove(), 800);
+    });
+});
 </script>
 </body>
 </html>
