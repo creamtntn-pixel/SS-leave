@@ -458,6 +458,14 @@ button {
                         class="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all duration-300">
                 </div>
 
+                <div class="space-y-2 animate-fade-in" style="animation-delay: 0.35s;">
+    <label for="studentAddress" class="flex items-center gap-2 text-foreground font-medium text-sm">
+        <i data-lucide="map-pin" class="w-4 h-4" style="color: #c2185b; stroke: #c2185b;"></i>
+         ที่อยู่นักเรียน
+    </label>
+    <textarea id="studentAddress" placeholder="เช่น 15 หมู่ 3 ต.ตึงคลาน&#10;อ.เมือง จ.เชียงใหม่ 63160" 
+        class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"></textarea>
+</div>
                 <div class="space-y-2 animate-fade-in" style="animation-delay: 0.3s;">
                     <label for="teacherName" class="flex items-center gap-2 text-foreground font-medium text-sm">
                         <i data-lucide="user-check" class="w-4 h-4" style="color: #c2185b; stroke: #c2185b;"></i>
@@ -615,6 +623,19 @@ async function generatePDF() {
       y += logoSize + 10;
     }
 
+    const addressStr = (document.getElementById("studentAddress") || {}).value || "";
+    if (addressStr && addressStr.trim()) {
+      doc.setFontSize(17);
+      const maxWidth = 50;
+      const addressLines = doc.splitTextToSize(addressStr.trim(), maxWidth);
+      let addressY = y;
+      for (const line of addressLines) {
+        doc.text(line, 130, addressY);
+        addressY += 6;
+      }
+      y += (addressLines.length * 6) + 5;
+    }
+    
     const leaveType = document.getElementById("leaveType").value;
 
     let leaveText = "ขออนุญาตลาเรียน";
@@ -630,6 +651,7 @@ async function generatePDF() {
      doc.text(`วันที่ ${todayThai}`, 105, y, { align: "center" });
     y += 12;
 
+  
     // ===== เรื่อง / เรียน =====
     doc.text(`เรื่อง    ${leaveText}`, 20, y); y += 8;
     doc.text(`เรียน    ครูประจำชั้น ${teacher}`, 20, y); y += 12;
@@ -639,7 +661,7 @@ async function generatePDF() {
       `\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\    ข้าพเจ้า ${name} นักเรียนชั้น ${cls} ` +
       `${leaveText} เนื่องจาก ${reason} ` +
       `${dateToThai(from)} ถึง ${dateToThai(to)}`,
-      20, y, { maxWidth: 170 }
+      20, y, { maxWidth: 140 }
     );
     y += 30;
 
